@@ -1,0 +1,190 @@
+:root{
+    --light-cold:#8ecae6;
+    --dark-cold: #219ebc;
+    --light-warm: #ffb703;
+    --dark-warm: #fb8500;
+    --dark: #023047;
+    --light: #eeeeeeee;
+
+}
+*{
+    margin: 0;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+html, body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+header,footer{
+    background-color: var(--dark-cold);
+    
+}
+
+main{
+    flex-grow: 1;
+    
+}
+div{
+    max-width: 80vmin;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    
+}
+.header,.main,.footer{
+    padding: 1em 0;
+}
+fieldset{
+    
+    border-radius: 5px;
+    border-color: var(--light-cold);
+    /*width: 400px; */
+
+    
+}
+.square-content{
+    position: absolute;
+}
+.row{
+    float: left;
+    width: 100%;
+}
+div.row{
+    width: calc(100% / 7.0);
+    float: left;
+}
+/*
+.row>div{
+    width: calc(100% / 7.0);
+    float: left;
+}
+*/
+
+.square-holder{
+    position: relative;
+}
+.square-sizer{
+    padding-top: 100%;
+}
+.square-content{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+.wall{
+    background-color: #219ebc;
+}
+.cell{
+    background-color: var(--light-warm);
+}
+.way{
+    /*background-color: var(--dark-cold);*/
+    background-color: white;
+}
+.target{
+    background-size: 100% 100%;
+    background-image: url(images/dreieck.png);
+}
+.player,.direction.arrow{
+    background-size: 600% 100%;
+    background-image: url(images/symbols.svg);
+}
+
+.player{
+    background-position: 0%;
+}
+
+button{
+    width: 5em;
+    margin-left: 0.5;
+    padding: 0.5em;
+}
+button:hover{
+    background-color: var(--light-warm);
+    cursor: pointer;
+}
+.size-bar{
+    clear: both;
+    text-align: right;
+    padding-top: 0.5em;
+
+}
+.control-holder{
+    background-color: var(--light-warm);
+    width: 90%;
+    max-width: 10em;
+}
+
+
+.direction.arrow{
+    cursor: pointer;
+}
+.direction.arrow:hover{
+    background-color: var(--dark-warm);
+}
+.direction.arrow,.direction.spacer{
+    width: calc(33% - 2px);
+    height: calc(33% - 2px);
+    float: left;
+    border: 1px solid;
+    color: var(--dark-cold);
+
+}
+.direction.arrow.up{
+    background-position: 40%;
+}
+.direction.arrow.right{
+    background-position: 60%;
+}.direction.arrow.left{
+    background-position: 100%
+}
+.direction.arrow.down{
+    background-position: 80%;
+}
+.pop-up{
+    position: absolute;
+    background-color: rgb(0,0,0,0.7);
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.pop-up > div{
+    background-color: var(--light);
+    width: 15em;
+    padding: 3em;
+    text-align: center;
+    border-radius: 0.5em;
+    border: black;
+    margin-left: auto;
+    margin-right: auto;
+}
+.pop-up > div > div{
+    margin: 1em;
+}
+landscape{
+    width: 18%;
+    max-width: 1000px;
+
+}
+@media (orientation: landscape) {
+    .body{
+        width: 80%;
+        max-width: 1000px;
+    }
+    .main{
+        /*display: flex;*/
+        justify-content: space-between;
+    }
+    .filedset{
+        width: 45%;
+    }
+
+}
