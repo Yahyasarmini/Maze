@@ -125,7 +125,7 @@ const maze = {
         content.appendChild(arrowup);
         content.appendChild(this.elementWithClasses("div", "direction spacer"));
         content.appendChild(arrowleft);
-        //content.appendChild(this.elementWithClasses("div","direction arrow"));
+        
         content.appendChild(player_symbol);
         content.appendChild(arrowright);
         content.appendChild(this.elementWithClasses("div", "direction spacer"));
@@ -151,10 +151,8 @@ const maze = {
             newField.appendChild(this.generateRow(row,height));
         }
         oldField.replaceWith(newField);   
-        //console.log(width);
 
         document.querySelectorAll('div.row').forEach(element =>{
-            //element.style.width = 'clac(100%)' / width ;
             element.style.width = `calc(100% / ${width})`;
         });
         return newField;
@@ -170,13 +168,14 @@ const maze = {
     generateCell(rowIndex,colum){
         const squareHolder = this.elementWithClasses("div", "square-holder");
         const squareSizer = this.elementWithClasses("div", "square-sizer");
-        const squareContent = this.elementWithClasses("div", "square-content cell");
+        const squareContent = this.elementWithClasses("div", "cell square-content");
 
         squareHolder.appendChild(squareSizer);
         squareHolder.appendChild(squareContent);
 
         squareContent.dataset.x = colum;
         squareContent.dataset.y = rowIndex;
+        
         
 
         return squareHolder;
@@ -199,17 +198,15 @@ const maze = {
         this.playerY = y;
     
         const playerCell = document.querySelector(`[data-x="${x}"][data-y="${y}"]`);
-       
-        playerCell.classList.remove("cell");
-        playerCell.classList.add("way");
-        playerCell.classList.add("player");
         
         const oldPlayer = document.querySelector('.square-content.player');
         if(oldPlayer){
-            oldPlayer.classList.add("player");
+            oldPlayer.classList.remove("player");
         }
-        else {
-            playerCell.classList.remove("player");
+        if(playerCell){
+            playerCell.classList.remove("cell");
+            playerCell.classList.add("way");
+            playerCell.classList.add("player");
         }
         
         
@@ -284,9 +281,7 @@ const maze = {
         }
     },
 
-    //directions: [{dx:1,dy:0},{dx:-1,dy:0},{dx:0,dy:1},{dx:0,dy:-1}],
     directions: [{dx:1,dy:0},{dx:-1,dy:0},{dx:0,dy:-1},{dx:0,dy:1}],
-    
     
     async solve(Fromdx,Fromdy){
         const oldX = this.playerX;
@@ -295,10 +290,9 @@ const maze = {
             if(i.dx == -Fromdx && i.dy == -Fromdy){
                 continue;
             }
-            //console.log(Fromdx,Fromdy,i.dx,i.dy);
-            const newX = this.oldX + i.dx;
-            const newY = this.oldY + i.dy;
-            const cell = await this.maze.move(i.dx,i.dy);
+            const newX = oldX + i.dx;
+            const newY = oldY + i.dy;
+            const {cell} = await this.maze.move(i.dx,i.dy); 
             switch (cell) {
                 case 0:
                     this.positionplayer(newX,newY);
@@ -314,12 +308,11 @@ const maze = {
                         this.positionplayer(newX,newY);
                         this.showpopUp("maze solved");
                         return Promise.resolve(true);
-                        
                     case 2:
                         this.markasWall(newX,newY);
                         break;
             }
-            return Promise.resolve(false);
+             Promise.resolve(false);
         }
 
     },
@@ -344,20 +337,16 @@ const localmaze = {
      async generate(width, height){
         this.playerX = 1;
         this.playerY = 1;
-        //return {playerX:this.playerX, playerY:this.playerY};
         return new Promise(resolve => {
             window.setTimeout(() =>
             resolve({playerX:this.playerX, playerY:this.playerY}),200
             );
+            
         });
         
     },
 
     
-
-
-
-
     
      async move(dx, dy){
         if(dx < -1 || dx > 1 || dy < -1 || dy > +1)
@@ -370,43 +359,12 @@ const localmaze = {
             this.playerX = newX;
             this.playerY = newY;
         }
-        //return { cell , playerX: this.playerX, playerY:this.playerY };
-        
         return new Promise(resolve => {
             window.setTimeout(() =>
-            resolve({cell, playerX:this.playerX, playerY:this.playerY})
+            resolve({cell, playerX:this.playerX, playerY:this.playerY}),200
             );
         });
         
     }
     
 }
-
-
-
-
-
- /*
-    elementWithClasses(elementType,classnames){
-        const element = document.createElement(elementType);
-        (classnames => 
-            {
-            element.classList.add(classnames);
-             }
-        );
-        return element;
-        
-    },
-    
-    elementWithClasses(elementType,classnames){
-        const element = document.createElement(elementType);
-        classnames.split(" ").forEach(classnames => 
-            {
-            element.classList.add(classnames);
-             }
-        );
-        return element;
-        
-    },
-    */
-    
