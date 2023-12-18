@@ -9,7 +9,7 @@ const maze = {
         body.appendChild(header);
         body.appendChild(main);
         body.appendChild(footer);
-        this.maze=localmaze;
+        this.maze=remoteMaze;
         //this.generateField(7,7);
         this.newMaze(7,7);
         return body;
@@ -60,12 +60,15 @@ const maze = {
         const BTNsmall = this.generatebutton('small','btnsmall');
         const BTNmedium = this.generatebutton('medium','btnmedium');
         const BTNlarge = this.generatebutton('large','btnlarge');
+        const BTNHuge = this.generatebutton('huge','btnhuge');
         sizebar.appendChild(BTNsmall);
         sizebar.appendChild(BTNmedium);
         sizebar.appendChild(BTNlarge);
+        sizebar.appendChild(BTNHuge);
         BTNsmall.addEventListener("click", () => {this.newMaze(7,7)});
         BTNmedium.addEventListener("click", () => {this.newMaze(13,13)});
         BTNlarge.addEventListener("click", () => {this.newMaze(25,25)});
+        BTNHuge.addEventListener("click", () => {this.newMaze(45,45)});
 
 
         return sizebar;
@@ -94,6 +97,7 @@ const maze = {
         const fieldset = this.makeFieldset('Controls');
         const communication = this.makeFieldset('Communication');
         const emptypara = document.createElement('p');
+        emptypara.id = "communications";
         const controls = this.generateControls();
         fieldset.appendChild(controls);
         communication.appendChild(emptypara);
@@ -125,7 +129,6 @@ const maze = {
         content.appendChild(arrowup);
         content.appendChild(this.elementWithClasses("div", "direction spacer"));
         content.appendChild(arrowleft);
-        
         content.appendChild(player_symbol);
         content.appendChild(arrowright);
         content.appendChild(this.elementWithClasses("div", "direction spacer"));
@@ -209,7 +212,6 @@ const maze = {
             playerCell.classList.add("player");
         }
         
-        
     },
    
     elementWithClasses(elementType,classnames){
@@ -252,15 +254,19 @@ const maze = {
         const oldPlayer = document.querySelector(`[data-x= "${this.maze.playerX}"][data-y= "${this.maze.playerY}"]`);
         const newX = this.playerX + dx;
         const newY = this.playerY + dy;
-        const {cell} = await this.maze.move(dx,dy);
+
+        
+        const decompose = await this.maze.move(dx,dy);
+        const cell = decompose.code.cell;
+        document.getElementById("communications");
         switch (cell) {
             case 0:
                 this.positionplayer(newX,newY);
-                oldPlayer.classList.remove("player");
+                
                 break;
                 case 1:
                     this.positionplayer(newX,newY);
-                    oldPlayer.classList.remove("player");
+                    
                     this.showpopUp("You won !");
                     break;
                 case 2:
@@ -290,17 +296,18 @@ const maze = {
             if(i.dx == -Fromdx && i.dy == -Fromdy){
                 continue;
             }
+            
             const newX = oldX + i.dx;
             const newY = oldY + i.dy;
-            const {cell} = await this.maze.move(i.dx,i.dy); 
-            switch (cell) {
+            
+            const cell = await this.maze.move(i.dx,i.dy); ;
+            switch (cell.code.cell) {
                 case 0:
                     this.positionplayer(newX,newY);
                     const solved = await this.solve(i.dx,i.dy);
                     if (solved) {
                         return Promise.resolve(true);
                     }
-                    //this.mazeMove(-i.dx,-i.dy);
                     await this.maze.move(-i.dx,-i.dy);
                     this.positionplayer(oldX,oldY);
                     break;
@@ -320,6 +327,27 @@ const maze = {
     
 };
 
+const remoteMaze = {
+    URL: "https://www2.hs-esslingen.de/~melcher/it/maze/",
+    token: null,
+    async FetchandDecode(request) {
+        const response = await fetch(this.URL + "?" + request);
+        return response.json(); 
+    },
+    async generate(width, height) {
+        const ret = await this.FetchandDecode(`request=generate&userid=yasait01&width=${width}&height=${height}`);
+        this.token = ret.token;
+        return ret;
+    },
+    async move(dx, dy) {
+        const ret = await this.FetchandDecode(`request=move&token=${this.token}&dx=${dx}&dy=${dy}`);
+        return ret;
+    }
+};
+
+
+
+
 
 const localmaze = {
     playerX: 1,
@@ -337,6 +365,7 @@ const localmaze = {
      async generate(width, height){
         this.playerX = 1;
         this.playerY = 1;
+        
         return new Promise(resolve => {
             window.setTimeout(() =>
             resolve({playerX:this.playerX, playerY:this.playerY}),200
@@ -353,12 +382,13 @@ const localmaze = {
             alert('to big move');
         const newX = this.playerX + dx
         const newY = this.playerY + dy
-        //const cell = this.maze[this[newY][newX]];
+        
         const cell = this.maze[newY][newX];
         if (cell == 0 || cell == 1){
             this.playerX = newX;
             this.playerY = newY;
         }
+        
         return new Promise(resolve => {
             window.setTimeout(() =>
             resolve({cell, playerX:this.playerX, playerY:this.playerY}),200
